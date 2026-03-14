@@ -2,13 +2,13 @@
 const searchInput = document.getElementById("search-input");
 const searchBtn = document.getElementById("search-btn");
 const genreSelect = document.getElementById("genre-select");
-const resultsDiv = document.getElementById("results");
-const popularDiv = document.getElementById("popular-results");
+const resultsDiv = document.getElementById("results");        // Ongoing / Search
+const popularDiv = document.getElementById("popular-results"); // Popular section
 const modal = document.getElementById("anime-modal");
 
-let currentPage = 1;
 let currentQuery = "";
 let currentGenre = "";
+let currentPage = 1;
 let currentMode = "frontpage"; // frontpage, search
 
 // -------------------- Search --------------------
@@ -17,8 +17,7 @@ searchBtn.addEventListener("click", () => {
     currentQuery = query;
     currentGenre = genreSelect.value;
     currentPage = 1;
-
-    searchAnime(query, currentPage, true);
+    searchAnime(currentQuery, currentPage, true);
 });
 
 async function searchAnime(query, page, reset = false) {
@@ -35,7 +34,7 @@ async function searchAnime(query, page, reset = false) {
 
         if (reset) resultsDiv.innerHTML = "";
         renderAnimeCards(data.data, resultsDiv);
-        createLoadMore(data.pagination.has_next_page, "search", "search", page);
+        createLoadMore(data.pagination.has_next_page, "search", resultsDiv, page);
     } catch (err) {
         resultsDiv.innerHTML = "Error loading anime.";
         console.error(err);
@@ -46,14 +45,14 @@ async function searchAnime(query, page, reset = false) {
 async function loadFrontPage(page = 1) {
     currentMode = "frontpage";
     if (page === 1) resultsDiv.innerHTML = "Loading Ongoing Anime...";
-    
+
     try {
         const res = await fetch(`https://api.jikan.moe/v4/anime?status=airing&limit=12&page=${page}`);
         const data = await res.json();
 
         if (page === 1) resultsDiv.innerHTML = "";
         renderAnimeCards(data.data, resultsDiv);
-        createLoadMore(data.pagination.has_next_page, "frontpage", "ongoing", page);
+        createLoadMore(data.pagination.has_next_page, "frontpage", resultsDiv, page);
     } catch (err) {
         resultsDiv.innerHTML = "Error loading front page.";
         console.error(err);
@@ -70,28 +69,28 @@ async function loadPopularAnime(page = 1) {
 
         if (page === 1) popularDiv.innerHTML = "";
         renderAnimeCards(data.data, popularDiv);
-        createLoadMore(data.pagination.has_next_page, "popular", "popular", page);
+        createLoadMore(data.pagination.has_next_page, "popular", popularDiv, page);
     } catch (err) {
         popularDiv.innerHTML = "Error loading popular anime.";
         console.error(err);
     }
 }
 
-// -------------------- Render Cards --------------------
+// -------------------- Render Anime Cards --------------------
 function renderAnimeCards(animeList, container) {
     container.innerHTML += animeList
         .map(anime => `
-        <div class="anime-card"
-            data-title="${anime.title}"
-            data-synopsis="${anime.synopsis || "No synopsis"}"
-            data-image="${anime.images.jpg.large_image_url}"
-            data-score="${anime.score || "N/A"}"
-            data-year="${anime.year || "Unknown"}"
-            data-trailer="${anime.trailer?.embed_url || ""}">
-            <img src="${anime.images.jpg.image_url}" alt="${anime.title}">
-            <h2>${anime.title}</h2>
-        </div>
-    `).join("");
+            <div class="anime-card"
+                data-title="${anime.title}"
+                data-synopsis="${anime.synopsis || "No synopsis"}"
+                data-image="${anime.images.jpg.large_image_url}"
+                data-score="${anime.score || "N/A"}"
+                data-year="${anime.year || "Unknown"}"
+                data-trailer="${anime.trailer?.embed_url || ""}">
+                <img src="${anime.images.jpg.image_url}" alt="${anime.title}">
+                <h2>${anime.title}</h2>
+            </div>
+        `).join("");
 
     container.querySelectorAll(".anime-card").forEach(card => {
         card.onclick = () => {
@@ -109,15 +108,16 @@ function renderAnimeCards(animeList, container) {
 }
 
 // -------------------- Load More --------------------
-function createLoadMore(hasNext, mode, type = "", page = 1) {
-    const oldBtn = document.getElementById(`${type}-loadMore`);
+function createLoadMore(hasNext, mode, container, page) {
+    // Remove any old button inside this container
+    const oldBtn = container.querySelector(".load-more");
     if (oldBtn) oldBtn.remove();
     if (!hasNext) return;
 
     const btn = document.createElement("button");
-    btn.id = `${type}-loadMore`;
     btn.className = "load-more";
     btn.textContent = "Load More";
+
     btn.onclick = () => {
         const nextPage = page + 1;
         if (mode === "search") searchAnime(currentQuery, nextPage, false);
@@ -125,8 +125,7 @@ function createLoadMore(hasNext, mode, type = "", page = 1) {
         else if (mode === "popular") loadPopularAnime(nextPage);
     };
 
-    if (type === "popular") popularDiv.after(btn);
-    else resultsDiv.after(btn);
+    container.appendChild(btn);
 }
 
 // -------------------- Modal --------------------
