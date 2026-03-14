@@ -1,41 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Anime Explorer</title>
-
 <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
 <h1>Anime Explorer</h1>
 
 <div class="controls">
-
-<input id="search-input" placeholder="Search anime...">
-
-<select id="genre-select">
-<option value="">All Genres</option>
-<option value="1">Action</option>
-<option value="2">Adventure</option>
-<option value="4">Comedy</option>
-<option value="8">Drama</option>
-<option value="10">Fantasy</option>
-</select>
-
-<button id="search-btn">Search</button>
-
+  <input id="search-input" placeholder="Search anime...">
+  <select id="genre-select">
+    <option value="">All Genres</option>
+    <option value="1">Action</option>
+    <option value="2">Adventure</option>
+    <option value="4">Comedy</option>
+    <option value="8">Drama</option>
+    <option value="10">Fantasy</option>
+    <option value="23">Isekai</option>
+    <option value="9">Ecchi</option>
+    <option value="27">Shounen</option>
+    <option value="22">Romance</option>
+    <option value="40">Supernatural</option>
+    <option value="37">Horror</option>
+  </select>
+  <button id="search-btn">Search</button>
 </div>
 
+<h2>Ongoing Anime</h2>
 <div id="results" class="results"></div>
+
+<h2>Most Popular Anime</h2>
+<div id="popular-results" class="results"></div>
 
 <div id="anime-modal" class="modal hidden"></div>
 
 <script src="scripts.js"></script>
-
 </body>
 </html>
