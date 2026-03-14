@@ -96,10 +96,10 @@ h1 {
   background: #1e1e1e;
   padding: 15px;
   border-radius: 10px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
+  width: 90%;          /* flexible for small screens */
+  max-width: 600px;    /* cap on large screens */
+  max-height: 90vh;    /* never taller than viewport */
+  overflow-y: auto;    /* allow scrolling if content is taller than modal */
   position: relative;
   text-align: left;
 }
